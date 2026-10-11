@@ -13,8 +13,8 @@ This document provides ready-to-submit answers and copy for the **DoraHacks Arc 
 - **Deployed Contracts (Arc Mainnet - Chain ID 5042):**
   - **ArcPulseOracle:** `0xC7184A427Dabb853b2820a2D03f2268087cC058a` ([Explorer Link](https://explorer.arc.io/address/0xC7184A427Dabb853b2820a2D03f2268087cC058a))
   - **ArcInvoiceConverter (Consumer Showcase):** `0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd` ([Explorer Link](https://explorer.arc.io/address/0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd))
-- **Live Demo / Web Interface:** Running locally / verifiable via open-source codebase & contracts.
-- **Documentation:** Interactive Docs at `web/docs.html` / `docs/INTEGRATION.md` in repository.
+- **Live Demo / Web Interface:** https://arc-pulse-oracle.netlify.app/
+- **Interactive Documentation:** https://arc-pulse-oracle.netlify.app/docs.html
 
 ---
 
