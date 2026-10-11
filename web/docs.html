@@ -114,12 +114,12 @@
               </tr>
               <tr>
                 <td class="p-3 text-gray-400">ArcPulseOracle</td>
-                <td class="p-3 text-blue-400 select-all">0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8</td>
+                <td class="p-3 text-blue-400 select-all">0xC7184A427Dabb853b2820a2D03f2268087cC058a</td>
                 <td class="p-3 text-gray-400 font-sans">Feed Registry Contract</td>
               </tr>
               <tr>
                 <td class="p-3 text-gray-400">ArcInvoiceConverter</td>
-                <td class="p-3 text-blue-400 select-all">0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894</td>
+                <td class="p-3 text-blue-400 select-all">0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd</td>
                 <td class="p-3 text-gray-400 font-sans">Consumer Showcase</td>
               </tr>
               <tr>
@@ -283,7 +283,7 @@ contract MerchantCheckout {
           <pre class="panel-code p-4 rounded-lg overflow-x-auto"><code>import { ethers } from "ethers";
 
 const RPC_URL = "https://rpc.mainnet.arc.io";
-const ORACLE_ADDR = "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8";
+const ORACLE_ADDR = "0xC7184A427Dabb853b2820a2D03f2268087cC058a";
 const IDR_FEED = "0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9";
 
 const ABI = [
@@ -313,7 +313,7 @@ const client = createPublicClient({
 });
 
 const [price, decimals] = await client.readContract({
-  address: "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8",
+  address: "0xC7184A427Dabb853b2820a2D03f2268087cC058a",
   abi: [{
     name: "getLatestPrice",
     type: "function",

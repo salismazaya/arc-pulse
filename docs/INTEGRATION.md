@@ -11,8 +11,8 @@ This guide explains how to consume live price feeds from **ArcPulseOracle** insi
 | **Chain ID** | `5042` (`0x13b2`) |
 | **RPC Endpoint** | `https://rpc.mainnet.arc.io` |
 | **Explorer** | `https://explorer.arc.io` |
-| **ArcPulseOracle** | `0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8` |
-| **ArcInvoiceConverter** | `0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894` |
+| **ArcPulseOracle** | `0xC7184A427Dabb853b2820a2D03f2268087cC058a` |
+| **ArcInvoiceConverter** | `0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd` |
 | **Mempool Floor** | 20 Gwei (`20000000000` wei) |
 
 > **Important Arc Rule:** Every transaction broadcast to Arc must specify a gas price of at least **20 Gwei**. Transactions below 20 Gwei are dropped by the mempool without an on-chain receipt.
