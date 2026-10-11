@@ -1,5 +1,9 @@
 # ArcPulse
 
+<p align="center">
+  <img src="web/logo.png" alt="ArcPulse Logo" width="180" height="180" />
+</p>
+
 > Verifiable FX & Asset Oracle with Sub-Second Settlement on Arc L1  
 > Built for the DoraHacks Arc Microgrants program.
 

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background subtle radial gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#161e2e" />
+      <stop offset="100%" stop-color="#090d16" />
+    </radialGradient>
+
+    <!-- Arc Primary Core Gradient (Circle Blue to Clean Cyan) -->
+    <linearGradient id="arcCoreGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="60%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+
+    <!-- Pulse Signal Gradient -->
+    <linearGradient id="pulseSignalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3" />
+      <stop offset="35%" stop-color="#60a5fa" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#38bdf8" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#2563eb" stop-opacity="0.3" />
+    </linearGradient>
+
+    <!-- Subtle Drop Glow for Pulse Center -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Container / Canvas -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  <rect width="508" height="508" x="2" y="2" rx="110" fill="none" stroke="#1e293b" stroke-width="2" />
+
+  <!-- Outer Orbit / Arc Structure (Segmented Arc Rings) -->
+  <!-- Top Arc Ring -->
+  <path d="M 128 256 A 128 128 0 0 1 384 256" 
+        fill="none" 
+        stroke="url(#arcCoreGrad)" 
+        stroke-width="16" 
+        stroke-linecap="round" 
+        stroke-dasharray="14 14" 
+        opacity="0.35" />
+
+  <!-- Main Sweeping Geometric Arc (Representing Arc L1 / Circle Programmable Money) -->
+  <path d="M 108 256 A 148 148 0 1 1 404 256" 
+        fill="none" 
+        stroke="url(#arcCoreGrad)" 
+        stroke-width="24" 
+        stroke-linecap="round" />
+
+  <!-- Precision Anchor Nodes on Arc Ring -->
+  <circle cx="108" cy="256" r="12" fill="#3b82f6" />
+  <circle cx="108" cy="256" r="6" fill="#ffffff" />
+
+  <circle cx="404" cy="256" r="12" fill="#60a5fa" />
+  <circle cx="404" cy="256" r="6" fill="#ffffff" />
+
+  <!-- Central High-Frequency Pulse / Heartbeat Oracle Wave -->
+  <!-- Trajectory: (80,256) -> (170,256) -> (200,285) -> (235,175) -> (265,345) -> (295,225) -> (320,256) -> (432,256) -->
+  <path d="M 96 256 L 180 256 L 205 285 L 235 170 L 268 340 L 298 220 L 322 256 L 416 256" 
+        fill="none" 
+        stroke="#1d4ed8" 
+        stroke-width="20" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        opacity="0.4" />
+
+  <path d="M 96 256 L 180 256 L 205 285 L 235 170 L 268 340 L 298 220 L 322 256 L 416 256" 
+        fill="none" 
+        stroke="url(#pulseSignalGrad)" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        filter="url(#softGlow)" />
+
+  <path d="M 96 256 L 180 256 L 205 285 L 235 170 L 268 340 L 298 220 L 322 256 L 416 256" 
+        fill="none" 
+        stroke="#ffffff" 
+        stroke-width="4" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Apex Oracle Beacons (Data Ingestion & Relay Points) -->
+  <!-- Top Peak Node (235, 170) -->
+  <circle cx="235" cy="170" r="10" fill="#60a5fa" />
+  <circle cx="235" cy="170" r="5" fill="#ffffff" />
+
+  <!-- Bottom Trough Node (268, 340) -->
+  <circle cx="268" cy="340" r="10" fill="#3b82f6" />
+  <circle cx="268" cy="340" r="5" fill="#ffffff" />
+
+  <!-- Re-stabilization Node (298, 220) -->
+  <circle cx="298" cy="220" r="8" fill="#93c5fd" />
+  <circle cx="298" cy="220" r="4" fill="#ffffff" />
+
+  <!-- Sub-label / Precision Geometry Baseline -->
+  <circle cx="256" cy="420" r="4" fill="#3b82f6" opacity="0.8" />
+  <line x1="220" y1="420" x2="244" y2="420" stroke="#334155" stroke-width="2" stroke-linecap="round" />
+  <line x1="268" y1="420" x2="292" y2="420" stroke="#334155" stroke-width="2" stroke-linecap="round" />
+</svg>
