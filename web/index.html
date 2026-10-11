@@ -29,6 +29,11 @@
       color: #58a6ff;
       border-bottom: 2px solid #58a6ff;
     }
+    .net-active {
+      background-color: #21262d;
+      color: #ffffff;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between text-sm">
@@ -38,16 +43,22 @@
     <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <span class="font-bold text-white text-base tracking-tight">ArcPulse</span>
-        <span class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700 mono">Arc Mainnet</span>
+        
+        <!-- Dual Network Mode Switcher -->
+        <div class="inline-flex rounded border border-gray-700 bg-gray-900 p-0.5 text-xs">
+          <button id="netMainnetBtn" class="px-2.5 py-1 rounded net-active transition">
+            Mainnet (5042)
+          </button>
+          <button id="netTestnetBtn" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition">
+            Testnet (5042002)
+          </button>
+        </div>
       </div>
 
       <div class="flex items-center space-x-3">
         <a href="docs.html" class="text-xs text-gray-300 hover:text-white transition px-2 py-1">
           Docs
         </a>
-        <button id="switchNetworkBtn" class="text-xs px-3 py-1.5 rounded border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 transition">
-          Switch to Arc (5042)
-        </button>
         <button id="connectWalletBtn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3 py-1.5 rounded transition">
           Connect Wallet
         </button>
@@ -59,11 +70,17 @@
   <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
 
     <!-- Header Description -->
-    <div class="border-b border-gray-800 pb-6">
-      <h1 class="text-2xl font-bold text-white tracking-tight">On-Chain Price Feeds & FX Settlement</h1>
-      <p class="text-gray-400 mt-1 max-w-3xl">
-        Lightweight oracle infrastructure on Arc L1. Reads verifiable foreign exchange, cryptocurrency, and commodity rates with sub-second finality and 20 Gwei minimum gas compliance.
-      </p>
+    <div class="border-b border-gray-800 pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight">On-Chain Price Feeds & FX Settlement</h1>
+        <p class="text-gray-400 mt-1 max-w-3xl">
+          Lightweight oracle infrastructure on Arc L1. Reads verifiable foreign exchange, cryptocurrency, and commodity rates with sub-second finality and 20 Gwei minimum gas compliance.
+        </p>
+      </div>
+      <div class="text-xs text-gray-400 text-left sm:text-right mono">
+        <div>Active: <span id="currentNetLabel" class="text-blue-400 font-semibold">Arc Mainnet</span></div>
+        <div>Gas Floor: <span class="text-gray-300">20 Gwei</span></div>
+      </div>
     </div>
 
     <!-- Feeds Section with Category Filter -->
@@ -133,7 +150,7 @@
           <div class="border-t border-gray-800 pt-3 space-y-2 text-xs">
             <div class="flex justify-between text-gray-400">
               <span>Settlement Network</span>
-              <span class="text-gray-200 font-mono">Arc Mainnet (5042)</span>
+              <span id="settleNetLabel" class="text-gray-200 font-mono">Arc Mainnet (5042)</span>
             </div>
             <div class="flex justify-between text-gray-400">
               <span>Mempool Minimum Gas Floor</span>
@@ -152,15 +169,15 @@
     <!-- Contract References & Integration Snippet -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <div class="panel rounded-lg p-4 space-y-2 text-xs">
-        <span class="text-gray-400 font-medium">Deployed Contracts on Arc Mainnet</span>
+        <span class="text-gray-400 font-medium">Active Network Contracts</span>
         <div class="space-y-1.5 mono pt-1">
           <div class="flex items-center justify-between py-1 border-b border-gray-800">
             <span class="text-gray-300">ArcPulseOracle</span>
-            <a id="oracleExplorerLink" href="https://explorer.arc.io/address/0xC7184A427Dabb853b2820a2D03f2268087cC058a" target="_blank" class="text-blue-400 hover:underline">0xC718...058a</a>
+            <a id="oracleExplorerLink" href="#" target="_blank" class="text-blue-400 hover:underline">Loading...</a>
           </div>
           <div class="flex items-center justify-between py-1 border-b border-gray-800">
             <span class="text-gray-300">ArcInvoiceConverter</span>
-            <a id="converterExplorerLink" href="https://explorer.arc.io/address/0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd" target="_blank" class="text-blue-400 hover:underline">0x80C8...7dcd</a>
+            <a id="converterExplorerLink" href="#" target="_blank" class="text-blue-400 hover:underline">Loading...</a>
           </div>
           <div class="flex items-center justify-between py-1">
             <span class="text-gray-300">Integration Docs</span>
@@ -193,31 +210,44 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
       <div class="flex items-center space-x-3 text-gray-400">
         <a href="https://github.com/salismazaya/arc-pulse" target="_blank" class="hover:text-white transition">Repository</a>
         <span>/</span>
-        <a href="https://explorer.arc.io" target="_blank" class="hover:text-white transition">Arc Explorer</a>
+        <a id="footerExplorerLink" href="https://explorer.arc.io" target="_blank" class="hover:text-white transition">Arc Explorer</a>
       </div>
     </div>
   </footer>
 
   <script>
-    const CONFIG = {
-      chainIdHex: "0x13b2",
-      chainIdDec: 5042,
-      rpcUrl: "https://rpc.mainnet.arc.io",
-      explorerUrl: "https://explorer.arc.io",
-      oracle: "0xC7184A427Dabb853b2820a2D03f2268087cC058a",
-      converter: "0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd",
-      feeds: [
-        { name: "USD/IDR", id: "0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9", decimals: 8, prefix: "Rp ", suffix: "", tag: "Forex" },
-        { name: "EUR/USD", id: "0xa9226449042e36bf6865099eec57482aa55e3ad026c315a0e4a692b776c318ca", decimals: 8, prefix: "$", suffix: "", tag: "Forex" },
-        { name: "GBP/USD", id: "0xfd121bde813a3463e16ad2a4ea4103a6a122fbe2cdb07a80d4d293be07bb29fa", decimals: 8, prefix: "$", suffix: "", tag: "Forex" },
-        { name: "SGD/USD", id: "0x4909a26556c00e7b0acb9de75e2f886741f5f71099ee8c785d89bf5e9473a8e9", decimals: 8, prefix: "$", suffix: "", tag: "Forex" },
-        { name: "JPY/USD", id: "0xf9e627ddbdb060c1c9126daeb9addcd1d1ce7d49dbb540e2677f1c572bc8d195", decimals: 8, prefix: "¥", suffix: "", tag: "Forex" },
-        { name: "BTC/USDC", id: "0x9282eb09b844791118907b4cb066e6f9d167435f2382166b9e3594bcb4072bde", decimals: 8, prefix: "$", suffix: "", tag: "Crypto" },
-        { name: "ETH/USDC", id: "0x7ea41243798f304c9efd5c2e0c82a273090146c4718014ecc8570eb373df2b78", decimals: 8, prefix: "$", suffix: "", tag: "Crypto" },
-        { name: "SOL/USDC", id: "0x8c150dc41be8440d68c984f2397e7bebbdd5bf5a41f46cc17a0cc9e2e7817e44", decimals: 8, prefix: "$", suffix: "", tag: "Crypto" },
-        { name: "XAU/USD", id: "0x85de9facb9f703cb8b77bca3163eb0ad1780f77bf724319b6e5c67b12837e086", decimals: 8, prefix: "$", suffix: "/oz", tag: "Commodity RWA" }
-      ]
+    const NETWORKS = {
+      arcMainnet: {
+        name: "Arc Mainnet",
+        chainIdHex: "0x13b2",
+        chainIdDec: 5042,
+        rpcUrl: "https://rpc.mainnet.arc.io",
+        explorerUrl: "https://explorer.arc.io",
+        oracle: "0xC7184A427Dabb853b2820a2D03f2268087cC058a",
+        converter: "0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd",
+      },
+      arcTestnet: {
+        name: "Arc Testnet",
+        chainIdHex: "0x4cef52",
+        chainIdDec: 5042002,
+        rpcUrl: "https://rpc.testnet.arc.io",
+        explorerUrl: "https://explorer.testnet.arc.io",
+        oracle: "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8",
+        converter: "0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894",
+      }
     };
+
+    const FEEDS = [
+      { name: "USD/IDR", id: "0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9", decimals: 8, prefix: "Rp ", suffix: "", tag: "Forex" },
+      { name: "EUR/USD", id: "0xa9226449042e36bf6865099eec57482aa55e3ad026c315a0e4a692b776c318ca", decimals: 8, prefix: "$", suffix: "", tag: "Forex" },
+      { name: "GBP/USD", id: "0xfd121bde813a3463e16ad2a4ea4103a6a122fbe2cdb07a80d4d293be07bb29fa", decimals: 8, prefix: "$", suffix: "", tag: "Forex" },
+      { name: "SGD/USD", id: "0x4909a26556c00e7b0acb9de75e2f886741f5f71099ee8c785d89bf5e9473a8e9", decimals: 8, prefix: "$", suffix: "", tag: "Forex" },
+      { name: "JPY/USD", id: "0xf9e627ddbdb060c1c9126daeb9addcd1d1ce7d49dbb540e2677f1c572bc8d195", decimals: 8, prefix: "¥", suffix: "", tag: "Forex" },
+      { name: "BTC/USDC", id: "0x9282eb09b844791118907b4cb066e6f9d167435f2382166b9e3594bcb4072bde", decimals: 8, prefix: "$", suffix: "", tag: "Crypto" },
+      { name: "ETH/USDC", id: "0x7ea41243798f304c9efd5c2e0c82a273090146c4718014ecc8570eb373df2b78", decimals: 8, prefix: "$", suffix: "", tag: "Crypto" },
+      { name: "SOL/USDC", id: "0x8c150dc41be8440d68c984f2397e7bebbdd5bf5a41f46cc17a0cc9e2e7817e44", decimals: 8, prefix: "$", suffix: "", tag: "Crypto" },
+      { name: "XAU/USD", id: "0x85de9facb9f703cb8b77bca3163eb0ad1780f77bf724319b6e5c67b12837e086", decimals: 8, prefix: "$", suffix: "/oz", tag: "Commodity RWA" }
+    ];
 
     const ORACLE_ABI = [
       "function latestRoundData(bytes32 feedId) external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)"
@@ -228,21 +258,69 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
       "function settleInvoice(bytes32 invoiceId, string calldata currency, uint256 fiatUnits) external payable returns (uint256 usdcCost)"
     ];
 
+    let currentNetworkKey = "arcMainnet";
+    let activeConfig = NETWORKS[currentNetworkKey];
     let userAddress = null;
     let browserProvider = null;
     let selectedCurr = "IDR";
     let activeFilter = "all";
     let latestCalculatedWei = null;
+    let readProvider = new ethers.JsonRpcProvider(activeConfig.rpcUrl);
+    let oracleContract = new ethers.Contract(activeConfig.oracle, ORACLE_ABI, readProvider);
+    let converterContract = new ethers.Contract(activeConfig.converter, CONVERTER_ABI, readProvider);
 
-    const readProvider = new ethers.JsonRpcProvider(CONFIG.rpcUrl);
-    const oracleContract = new ethers.Contract(CONFIG.oracle, ORACLE_ABI, readProvider);
-    const converterContract = new ethers.Contract(CONFIG.converter, CONVERTER_ABI, readProvider);
+    function updateNetworkView() {
+      activeConfig = NETWORKS[currentNetworkKey];
+      readProvider = new ethers.JsonRpcProvider(activeConfig.rpcUrl);
+      oracleContract = new ethers.Contract(activeConfig.oracle, ORACLE_ABI, readProvider);
+      converterContract = new ethers.Contract(activeConfig.converter, CONVERTER_ABI, readProvider);
+
+      document.getElementById("currentNetLabel").textContent = activeConfig.name;
+      document.getElementById("settleNetLabel").textContent = `${activeConfig.name} (${activeConfig.chainIdDec})`;
+      
+      const oracleLink = document.getElementById("oracleExplorerLink");
+      oracleLink.textContent = activeConfig.oracle.slice(0, 6) + "..." + activeConfig.oracle.slice(-4);
+      oracleLink.href = `${activeConfig.explorerUrl}/address/${activeConfig.oracle}`;
+
+      const converterLink = document.getElementById("converterExplorerLink");
+      converterLink.textContent = activeConfig.converter.slice(0, 6) + "..." + activeConfig.converter.slice(-4);
+      converterLink.href = `${activeConfig.explorerUrl}/address/${activeConfig.converter}`;
+
+      document.getElementById("footerExplorerLink").href = activeConfig.explorerUrl;
+
+      if (currentNetworkKey === "arcMainnet") {
+        document.getElementById("netMainnetBtn").className = "px-2.5 py-1 rounded net-active transition";
+        document.getElementById("netTestnetBtn").className = "px-2.5 py-1 rounded text-gray-400 hover:text-white transition";
+      } else {
+        document.getElementById("netTestnetBtn").className = "px-2.5 py-1 rounded net-active transition";
+        document.getElementById("netMainnetBtn").className = "px-2.5 py-1 rounded text-gray-400 hover:text-white transition";
+      }
+
+      loadFeeds();
+      calculateQuote();
+    }
+
+    document.getElementById("netMainnetBtn").addEventListener("click", () => {
+      if (currentNetworkKey !== "arcMainnet") {
+        currentNetworkKey = "arcMainnet";
+        updateNetworkView();
+        if (userAddress) switchWalletNetwork();
+      }
+    });
+
+    document.getElementById("netTestnetBtn").addEventListener("click", () => {
+      if (currentNetworkKey !== "arcTestnet") {
+        currentNetworkKey = "arcTestnet";
+        updateNetworkView();
+        if (userAddress) switchWalletNetwork();
+      }
+    });
 
     async function loadFeeds() {
       const container = document.getElementById("feedsGrid");
       container.innerHTML = "";
 
-      const filtered = activeFilter === "all" ? CONFIG.feeds : CONFIG.feeds.filter(f => f.tag === activeFilter);
+      const filtered = activeFilter === "all" ? FEEDS : FEEDS.filter(f => f.tag === activeFilter);
 
       for (const f of filtered) {
         const card = document.createElement("div");
@@ -323,26 +401,23 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
       }
     }
 
-    async function switchNetwork() {
-      if (!window.ethereum) {
-        alert("Web3 wallet not detected.");
-        return;
-      }
+    async function switchWalletNetwork() {
+      if (!window.ethereum) return;
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: CONFIG.chainIdHex }]
+          params: [{ chainId: activeConfig.chainIdHex }]
         });
       } catch (switchError) {
         try {
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [{
-              chainId: CONFIG.chainIdHex,
-              chainName: "Arc Mainnet",
+              chainId: activeConfig.chainIdHex,
+              chainName: activeConfig.name,
               nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-              rpcUrls: [CONFIG.rpcUrl],
-              blockExplorerUrls: [CONFIG.explorerUrl]
+              rpcUrls: [activeConfig.rpcUrl],
+              blockExplorerUrls: [activeConfig.explorerUrl]
             }]
           });
         } catch (addError) {
@@ -357,7 +432,7 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
         return;
       }
       try {
-        await switchNetwork();
+        await switchWalletNetwork();
         browserProvider = new ethers.BrowserProvider(window.ethereum);
         const signer = await browserProvider.getSigner();
         userAddress = await signer.getAddress();
@@ -385,22 +460,22 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
 
       try {
         const signer = await browserProvider.getSigner();
-        const converterWithSigner = new ethers.Contract(CONFIG.converter, CONVERTER_ABI, signer);
+        const converterWithSigner = new ethers.Contract(activeConfig.converter, CONVERTER_ABI, signer);
         const val = parseFloat(document.getElementById("fiatInput").value || "0");
-        const invoiceId = ethers.keccak256(ethers.toUtf8Bytes("WEB-INV-" + Date.now()));
+        const invoiceId = ethers.keccak256(ethers.toUtf8Bytes("INV-" + Date.now()));
 
         const tx = await converterWithSigner.settleInvoice(invoiceId, selectedCurr, BigInt(Math.round(val)), {
           value: latestCalculatedWei,
           gasPrice: 20000000000n // Arc minimum gas floor
         });
 
-        settleBtn.textContent = "Confirming on Arc L1...";
+        settleBtn.textContent = `Confirming on ${activeConfig.name}...`;
         txResult.classList.remove("hidden");
-        txResult.innerHTML = `Transaction Sent: <a href="${CONFIG.explorerUrl}/tx/${tx.hash}" target="_blank" class="text-blue-400 underline">${tx.hash.slice(0,18)}...</a>`;
+        txResult.innerHTML = `Transaction Sent: <a href="${activeConfig.explorerUrl}/tx/${tx.hash}" target="_blank" class="text-blue-400 underline">${tx.hash.slice(0,18)}...</a>`;
 
         const receipt = await tx.wait();
         settleBtn.textContent = "Settlement Confirmed";
-        txResult.innerHTML = `Confirmed in block ${receipt.blockNumber}. <a href="${CONFIG.explorerUrl}/tx/${tx.hash}" target="_blank" class="text-emerald-400 underline">View Receipt</a>`;
+        txResult.innerHTML = `Confirmed in block ${receipt.blockNumber}. <a href="${activeConfig.explorerUrl}/tx/${tx.hash}" target="_blank" class="text-emerald-400 underline">View Receipt</a>`;
       } catch (err) {
         console.error("Settlement error:", err);
         settleBtn.textContent = "Pay & Settle Invoice On-Chain";
@@ -412,14 +487,12 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
     }
 
     document.getElementById("connectWalletBtn").addEventListener("click", connectWallet);
-    document.getElementById("switchNetworkBtn").addEventListener("click", switchNetwork);
     document.getElementById("quoteBtn").addEventListener("click", calculateQuote);
     document.getElementById("settleBtn").addEventListener("click", settleInvoice);
     document.getElementById("refreshFeedsBtn").addEventListener("click", loadFeeds);
     document.getElementById("fiatInput").addEventListener("input", calculateQuote);
 
-    loadFeeds();
-    calculateQuote();
+    updateNetworkView();
   </script>
 </body>
 </html>

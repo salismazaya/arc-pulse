@@ -50,7 +50,7 @@
           Return to App
         </a>
         <span class="text-xs px-2.5 py-1 rounded border border-gray-700 bg-gray-800 text-gray-300 mono">
-          Arc Mainnet (5042)
+          Dual Network (Mainnet / Testnet)
         </span>
       </div>
     </div>
@@ -73,9 +73,9 @@
       </div>
 
       <div class="panel rounded-lg p-3.5 space-y-2 text-xs">
-        <span class="text-gray-300 font-semibold block">Arc Native USDC Gas</span>
+        <span class="text-gray-300 font-semibold block">Arc Gas Parameters</span>
         <p class="text-gray-400 text-[11px] leading-relaxed">
-          Arc uses USDC for native transaction fees with sub-second finality. Ensure transactions include at least 20 Gwei gasPrice.
+          Arc uses USDC for native transaction fees with sub-second finality. Ensure transactions include at least 20 Gwei gasPrice floor on both Mainnet and Testnet.
         </p>
       </div>
     </aside>
@@ -88,44 +88,49 @@
         <div class="border-b border-gray-800 pb-3">
           <h1 class="text-xl font-bold text-white tracking-tight">1. Network & Contract Addresses</h1>
           <p class="text-gray-400 text-xs mt-1">
-            ArcPulse core parameters on Arc L1 Mainnet.
+            ArcPulse deployments across Arc L1 Mainnet and Arc Testnet.
           </p>
         </div>
 
-        <div class="panel rounded-lg overflow-hidden">
+        <div class="panel rounded-lg overflow-x-auto">
           <table class="w-full text-left text-xs border-collapse">
             <thead class="bg-[#090d13] text-gray-300">
               <tr>
                 <th class="p-3 border-b border-gray-800">Parameter</th>
-                <th class="p-3 border-b border-gray-800">Value</th>
-                <th class="p-3 border-b border-gray-800">Description</th>
+                <th class="p-3 border-b border-gray-800">Arc Mainnet</th>
+                <th class="p-3 border-b border-gray-800">Arc Testnet</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-800 mono text-[12px]">
               <tr>
-                <td class="p-3 text-gray-400">Chain ID</td>
+                <td class="p-3 text-gray-400 font-sans">Chain ID</td>
                 <td class="p-3 text-white">5042 (0x13b2)</td>
-                <td class="p-3 text-gray-400 font-sans">Arc Mainnet</td>
+                <td class="p-3 text-white">5042002 (0x4cef52)</td>
               </tr>
               <tr>
-                <td class="p-3 text-gray-400">RPC URL</td>
+                <td class="p-3 text-gray-400 font-sans">RPC Endpoint</td>
                 <td class="p-3 text-blue-400 select-all">https://rpc.mainnet.arc.io</td>
-                <td class="p-3 text-gray-400 font-sans">JSON-RPC Endpoint</td>
+                <td class="p-3 text-blue-400 select-all">https://rpc.testnet.arc.io</td>
               </tr>
               <tr>
-                <td class="p-3 text-gray-400">ArcPulseOracle</td>
-                <td class="p-3 text-blue-400 select-all">0xC7184A427Dabb853b2820a2D03f2268087cC058a</td>
-                <td class="p-3 text-gray-400 font-sans">Feed Registry Contract</td>
+                <td class="p-3 text-gray-400 font-sans">Explorer</td>
+                <td class="p-3 text-gray-300">https://explorer.arc.io</td>
+                <td class="p-3 text-gray-300">https://explorer.testnet.arc.io</td>
               </tr>
               <tr>
-                <td class="p-3 text-gray-400">ArcInvoiceConverter</td>
-                <td class="p-3 text-blue-400 select-all">0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd</td>
-                <td class="p-3 text-gray-400 font-sans">Consumer Showcase</td>
+                <td class="p-3 text-gray-400 font-sans">ArcPulseOracle</td>
+                <td class="p-3 text-emerald-400 select-all">0xC7184A427Dabb853b2820a2D03f2268087cC058a</td>
+                <td class="p-3 text-gray-300 select-all">0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8</td>
               </tr>
               <tr>
-                <td class="p-3 text-gray-400">Gas Price Floor</td>
+                <td class="p-3 text-gray-400 font-sans">ArcInvoiceConverter</td>
+                <td class="p-3 text-emerald-400 select-all">0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd</td>
+                <td class="p-3 text-gray-300 select-all">0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894</td>
+              </tr>
+              <tr>
+                <td class="p-3 text-gray-400 font-sans">Gas Price Floor</td>
                 <td class="p-3 text-white">20 Gwei (20,000,000,000 wei)</td>
-                <td class="p-3 text-gray-400 font-sans">Strict mempool floor</td>
+                <td class="p-3 text-white">20 Gwei (20,000,000,000 wei)</td>
               </tr>
             </tbody>
           </table>
@@ -137,7 +142,7 @@
         <div class="border-b border-gray-800 pb-3">
           <h2 class="text-lg font-bold text-white tracking-tight">2. Active Feeds Registry (8 Decimals)</h2>
           <p class="text-gray-400 text-xs mt-1">
-            Feed IDs are computed as <code>keccak256(bytes(pairName))</code>. All prices are stored as 8-decimal signed integers.
+            Feed IDs are computed as <code>keccak256(bytes(pairName))</code> and are identical across Mainnet and Testnet. All prices use 8-decimal signed integers.
           </p>
         </div>
 
@@ -282,7 +287,9 @@ contract MerchantCheckout {
           <span class="text-xs font-semibold text-gray-300">Ethers.js (v6)</span>
           <pre class="panel-code p-4 rounded-lg overflow-x-auto"><code>import { ethers } from "ethers";
 
+// Select Mainnet or Testnet RPC
 const RPC_URL = "https://rpc.mainnet.arc.io";
+// Mainnet: 0xC7184A427Dabb853b2820a2D03f2268087cC058a | Testnet: 0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8
 const ORACLE_ADDR = "0xC7184A427Dabb853b2820a2D03f2268087cC058a";
 const IDR_FEED = "0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9";
 

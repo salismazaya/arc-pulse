@@ -23,15 +23,15 @@ async function main() {
   // 2. Register all 9 feeds
   console.log("\n2. Registering Feeds...");
   const feeds = [
-    { name: "USD/IDR", decimals: 8, direction: 0, initialRate: 1788906334400n, tag: "Forex" },
-    { name: "EUR/USD", decimals: 8, direction: 1, initialRate: 112052602n, tag: "Forex" },
-    { name: "GBP/USD", decimals: 8, direction: 1, initialRate: 132288606n, tag: "Forex" },
-    { name: "SGD/USD", decimals: 8, direction: 1, initialRate: 78082482n, tag: "Forex" },
-    { name: "JPY/USD", decimals: 8, direction: 0, initialRate: 15828726500n, tag: "Forex" },
-    { name: "BTC/USDC", decimals: 8, direction: 1, initialRate: 8300300000000n, tag: "Crypto" },
-    { name: "ETH/USDC", decimals: 8, direction: 1, initialRate: 250053000000n, tag: "Crypto" },
-    { name: "SOL/USDC", decimals: 8, direction: 1, initialRate: 10935000000n, tag: "Crypto" },
-    { name: "XAU/USD", decimals: 8, direction: 1, initialRate: 271240000000n, tag: "Commodity RWA" },
+    { name: "USD/IDR", decimals: 8, direction: 0, initialRate: 1788906334400n, prefix: "Rp ", suffix: "", tag: "Forex" },
+    { name: "EUR/USD", decimals: 8, direction: 1, initialRate: 112052602n, prefix: "$", suffix: "", tag: "Forex" },
+    { name: "GBP/USD", decimals: 8, direction: 1, initialRate: 132288606n, prefix: "$", suffix: "", tag: "Forex" },
+    { name: "SGD/USD", decimals: 8, direction: 1, initialRate: 78082482n, prefix: "$", suffix: "", tag: "Forex" },
+    { name: "JPY/USD", decimals: 8, direction: 0, initialRate: 15828726500n, prefix: "¥", suffix: "", tag: "Forex" },
+    { name: "BTC/USDC", decimals: 8, direction: 1, initialRate: 8300300000000n, prefix: "$", suffix: "", tag: "Crypto" },
+    { name: "ETH/USDC", decimals: 8, direction: 1, initialRate: 250053000000n, prefix: "$", suffix: "", tag: "Crypto" },
+    { name: "SOL/USDC", decimals: 8, direction: 1, initialRate: 10935000000n, prefix: "$", suffix: "", tag: "Crypto" },
+    { name: "XAU/USD", decimals: 8, direction: 1, initialRate: 271240000000n, prefix: "$", suffix: "/oz", tag: "Commodity RWA" },
   ];
 
   const registeredFeedData = {};
@@ -46,6 +46,8 @@ async function main() {
       feedId: feedId,
       decimals: f.decimals,
       direction: f.direction,
+      prefix: f.prefix,
+      suffix: f.suffix,
       tag: f.tag,
     };
     feedIds.push(feedId);
@@ -53,7 +55,6 @@ async function main() {
     console.log(`Registered ${f.name} -> ${feedId}`);
   }
 
-  // Batch update initial rates
   console.log("\nBatch updating initial prices on-chain...");
   const now = Math.floor(Date.now() / 1000);
   const batchTx = await oracle.batchUpdateRates(feedIds, initialPrices, now, { gasPrice });
@@ -83,20 +84,34 @@ async function main() {
     console.log(`Configured ${c.code} (${c.pair})`);
   }
 
-  // 5. Save deployed addresses
-  const deployedInfo = {
-    network: network.name,
+  // 5. Update multi-network deployed_contracts.json
+  const outputPath = path.join(__dirname, "../deployed_contracts.json");
+  let existingData = {};
+  if (fs.existsSync(outputPath)) {
+    try {
+      existingData = JSON.parse(fs.readFileSync(outputPath, "utf8"));
+    } catch (e) {}
+  }
+
+  const isMainnet = network.name === "arcMainnet";
+  const netKey = isMainnet ? "arcMainnet" : "arcTestnet";
+
+  existingData[netKey] = {
+    name: isMainnet ? "Arc Mainnet" : "Arc Testnet",
     chainId: network.config.chainId,
+    chainIdHex: isMainnet ? "0x13b2" : "0x4cef52",
+    rpcUrl: network.config.url,
+    explorerUrl: isMainnet ? "https://explorer.arc.io" : "https://explorer.testnet.arc.io",
     deployer: deployer.address,
     oracle: oracleAddress,
     converter: converterAddress,
+    gasPriceGwei: 20,
     feeds: registeredFeedData,
     timestamp: new Date().toISOString(),
   };
 
-  const outputPath = path.join(__dirname, "../deployed_contracts.json");
-  fs.writeFileSync(outputPath, JSON.stringify(deployedInfo, null, 2));
-  console.log(`\nDeployment details saved to ${outputPath}`);
+  fs.writeFileSync(outputPath, JSON.stringify(existingData, null, 2));
+  console.log(`\nDeployment details updated in ${outputPath}`);
   console.log(`Deployment on Arc ${network.name} COMPLETE!`);
 }
 

@@ -12,10 +12,27 @@ if (!fs.existsSync(deployedInfoPath)) {
   process.exit(1);
 }
 
-const deployedInfo = JSON.parse(fs.readFileSync(deployedInfoPath, "utf-8"));
-const rpcUrl = process.env.ARC_MAINNET_RPC_URL || process.env.ARC_RPC_URL || "https://rpc.mainnet.arc.io";
-const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
+const allConfigs = JSON.parse(fs.readFileSync(deployedInfoPath, "utf-8"));
 
+// Determine active network from CLI args or .env
+let networkKey = process.env.NETWORK || "arcMainnet";
+const netArgIdx = process.argv.indexOf("--network");
+if (netArgIdx !== -1 && process.argv[netArgIdx + 1]) {
+  networkKey = process.argv[netArgIdx + 1];
+}
+
+const networkConfig = allConfigs[networkKey];
+if (!networkConfig) {
+  console.error(`Invalid network '${networkKey}'. Available: ${Object.keys(allConfigs).join(", ")}`);
+  process.exit(1);
+}
+
+const rpcUrl =
+  networkKey === "arcMainnet"
+    ? process.env.ARC_MAINNET_RPC_URL || networkConfig.rpcUrl
+    : process.env.ARC_TESTNET_RPC_URL || networkConfig.rpcUrl;
+
+const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
 if (!privateKey) {
   console.error("DEPLOYER_PRIVATE_KEY is missing in .env");
   process.exit(1);
@@ -31,10 +48,12 @@ const oracleAbi = [
   "function updateRate(bytes32 feedId, int256 price, uint256 timestamp) external",
 ];
 
-const oracle = new ethers.Contract(deployedInfo.oracle, oracleAbi, wallet);
+const oracle = new ethers.Contract(networkConfig.oracle, oracleAbi, wallet);
+const deviationThreshold = parseFloat(process.env.DEVIATION_THRESHOLD_PCT || "0.05");
+const intervalMs = parseInt(process.env.RELAYER_INTERVAL_MS || "60000", 10);
 
 async function runRelayerSync() {
-  console.log(`[${new Date().toISOString()}] Fetching live market rates...`);
+  console.log(`[${new Date().toISOString()}] [${networkConfig.name}] Fetching live market rates...`);
   const liveRates = await fetchLiveRates();
 
   if (liveRates.length === 0) {
@@ -45,7 +64,7 @@ async function runRelayerSync() {
   const feedsToUpdate: { feedId: string; price: bigint; pair: string }[] = [];
 
   for (const report of liveRates) {
-    const meta = deployedInfo.feeds[report.pair];
+    const meta = networkConfig.feeds[report.pair];
     if (!meta) continue;
 
     try {
@@ -58,8 +77,7 @@ async function runRelayerSync() {
         `Feed: ${report.pair} | Live: ${report.price} | On-Chain: ${onChainPrice} | Dev: ${deviationPct.toFixed(2)}%`
       );
 
-      // Push if deviation > 0.05% or if first update
-      if (deviationPct >= 0.05 || onChainPrice === 0n) {
+      if (deviationPct >= deviationThreshold || onChainPrice === 0n) {
         feedsToUpdate.push({
           feedId: meta.feedId,
           price: report.price,
@@ -72,13 +90,13 @@ async function runRelayerSync() {
   }
 
   if (feedsToUpdate.length > 0) {
-    console.log(`Submitting batch update for ${feedsToUpdate.length} feeds...`);
+    console.log(`Submitting batch update for ${feedsToUpdate.length} feeds on ${networkConfig.name}...`);
     const feedIds = feedsToUpdate.map((f) => f.feedId);
     const prices = feedsToUpdate.map((f) => f.price);
     const timestamp = Math.floor(Date.now() / 1000);
 
     const tx = await oracle.batchUpdateRates(feedIds, prices, timestamp, {
-      gasPrice: 20000000000n, // Arc minimum 20 Gwei floor
+      gasPrice: 20000000000n, // 20 Gwei min floor on Arc
     });
     console.log(`Relayer TX Broadcast: ${tx.hash}`);
     const receipt = await tx.wait();
@@ -89,16 +107,20 @@ async function runRelayerSync() {
 }
 
 async function main() {
-  console.log("ArcPulse Relayer Daemon starting...");
+  console.log("==========================================");
+  console.log(`ArcPulse Relayer Daemon Starting`);
+  console.log(`Network: ${networkConfig.name} (Chain ID: ${networkConfig.chainId})`);
+  console.log(`RPC URL: ${rpcUrl}`);
   console.log(`Relayer address: ${wallet.address}`);
-  console.log(`Oracle contract: ${deployedInfo.oracle}`);
+  console.log(`Oracle contract: ${networkConfig.oracle}`);
+  console.log(`Deviation Threshold: ${deviationThreshold}%`);
+  console.log("==========================================");
 
   const isOnce = process.argv.includes("--once");
 
   if (isOnce) {
     await runRelayerSync();
   } else {
-    // Run periodic loop every 60 seconds
     await runRelayerSync();
     setInterval(async () => {
       try {
@@ -106,7 +128,7 @@ async function main() {
       } catch (err) {
         console.error("Error during relayer cycle:", err);
       }
-    }, 60000);
+    }, intervalMs);
   }
 }
 
