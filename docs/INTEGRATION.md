@@ -6,13 +6,14 @@ This guide explains how to consume live price feeds from **ArcPulseOracle** insi
 
 ## 1. Network & Contract Addresses
 
-| Parameter | Arc Testnet | Arc Mainnet (Upcoming) |
-| :--- | :--- | :--- |
-| **Chain ID** | `5042002` (`0x4cef52`) | `5042` (`0x13b2`) |
-| **RPC Endpoint** | `https://rpc.testnet.arc.io` | `https://rpc.mainnet.arc.io` |
-| **ArcPulseOracle** | `0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8` | TBD |
-| **ArcInvoiceConverter** | `0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894` | TBD |
-| **Mempool Floor** | 20 Gwei (`20000000000` wei) | 20 Gwei |
+| Parameter | Arc Mainnet |
+| :--- | :--- |
+| **Chain ID** | `5042` (`0x13b2`) |
+| **RPC Endpoint** | `https://rpc.mainnet.arc.io` |
+| **Explorer** | `https://explorer.arc.io` |
+| **ArcPulseOracle** | `0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8` |
+| **ArcInvoiceConverter** | `0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894` |
+| **Mempool Floor** | 20 Gwei (`20000000000` wei) |
 
 > **Important Arc Rule:** Every transaction broadcast to Arc must specify a gas price of at least **20 Gwei**. Transactions below 20 Gwei are dropped by the mempool without an on-chain receipt.
 
@@ -39,8 +40,6 @@ Feed IDs are derived from `keccak256(bytes(pairName))`. All reported prices use 
 ## 3. Smart Contract Integration (Solidity)
 
 ### Minimal Interface
-Add this interface to your project:
-
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -102,7 +101,7 @@ contract PaymentRouter {
 ```typescript
 import { ethers } from "ethers";
 
-const RPC_URL = "https://rpc.testnet.arc.io";
+const RPC_URL = "https://rpc.mainnet.arc.io";
 const ORACLE_ADDRESS = "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8";
 const IDR_FEED_ID = "0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9";
 
@@ -129,7 +128,7 @@ getLiveFeed();
 import { createPublicClient, http } from "viem";
 
 const client = createPublicClient({
-  transport: http("https://rpc.testnet.arc.io"),
+  transport: http("https://rpc.mainnet.arc.io"),
 });
 
 const ORACLE_ADDRESS = "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8";

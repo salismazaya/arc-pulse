@@ -38,7 +38,7 @@
     <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <span class="font-bold text-white text-base tracking-tight">ArcPulse</span>
-        <span class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700 mono">Arc Testnet</span>
+        <span class="text-xs px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700 mono">Arc Mainnet</span>
       </div>
 
       <div class="flex items-center space-x-3">
@@ -46,7 +46,7 @@
           Docs
         </a>
         <button id="switchNetworkBtn" class="text-xs px-3 py-1.5 rounded border border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700 transition">
-          Switch to Arc (5042002)
+          Switch to Arc (5042)
         </button>
         <button id="connectWalletBtn" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3 py-1.5 rounded transition">
           Connect Wallet
@@ -133,7 +133,7 @@
           <div class="border-t border-gray-800 pt-3 space-y-2 text-xs">
             <div class="flex justify-between text-gray-400">
               <span>Settlement Network</span>
-              <span class="text-gray-200 font-mono">Arc Testnet (5042002)</span>
+              <span class="text-gray-200 font-mono">Arc Mainnet (5042)</span>
             </div>
             <div class="flex justify-between text-gray-400">
               <span>Mempool Minimum Gas Floor</span>
@@ -152,15 +152,15 @@
     <!-- Contract References & Integration Snippet -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <div class="panel rounded-lg p-4 space-y-2 text-xs">
-        <span class="text-gray-400 font-medium">Deployed Contracts on Arc Testnet</span>
+        <span class="text-gray-400 font-medium">Deployed Contracts on Arc Mainnet</span>
         <div class="space-y-1.5 mono pt-1">
           <div class="flex items-center justify-between py-1 border-b border-gray-800">
             <span class="text-gray-300">ArcPulseOracle</span>
-            <a href="https://explorer.testnet.arc.io/address/0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8" target="_blank" class="text-blue-400 hover:underline">0x0E5A...afc8</a>
+            <a id="oracleExplorerLink" href="https://explorer.arc.io/address/0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8" target="_blank" class="text-blue-400 hover:underline">0x0E5A...afc8</a>
           </div>
           <div class="flex items-center justify-between py-1 border-b border-gray-800">
             <span class="text-gray-300">ArcInvoiceConverter</span>
-            <a href="https://explorer.testnet.arc.io/address/0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894" target="_blank" class="text-blue-400 hover:underline">0xB400...F894</a>
+            <a id="converterExplorerLink" href="https://explorer.arc.io/address/0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894" target="_blank" class="text-blue-400 hover:underline">0xB400...F894</a>
           </div>
           <div class="flex items-center justify-between py-1">
             <span class="text-gray-300">Integration Docs</span>
@@ -193,17 +193,17 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
       <div class="flex items-center space-x-3 text-gray-400">
         <a href="https://github.com/salismazaya/arc-pulse" target="_blank" class="hover:text-white transition">Repository</a>
         <span>/</span>
-        <a href="https://explorer.testnet.arc.io" target="_blank" class="hover:text-white transition">Testnet Explorer</a>
+        <a href="https://explorer.arc.io" target="_blank" class="hover:text-white transition">Arc Explorer</a>
       </div>
     </div>
   </footer>
 
   <script>
     const CONFIG = {
-      chainIdHex: "0x4cef52",
-      chainIdDec: 5042002,
-      rpcUrl: "https://rpc.testnet.arc.io",
-      explorerUrl: "https://explorer.testnet.arc.io",
+      chainIdHex: "0x13b2",
+      chainIdDec: 5042,
+      rpcUrl: "https://rpc.mainnet.arc.io",
+      explorerUrl: "https://explorer.arc.io",
       oracle: "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8",
       converter: "0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894",
       feeds: [
@@ -339,7 +339,7 @@ bytes32 feedId = 0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c30251474695
             method: "wallet_addEthereumChain",
             params: [{
               chainId: CONFIG.chainIdHex,
-              chainName: "Arc Testnet",
+              chainName: "Arc Mainnet",
               nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
               rpcUrls: [CONFIG.rpcUrl],
               blockExplorerUrls: [CONFIG.explorerUrl]

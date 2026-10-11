@@ -15,12 +15,12 @@ Smart contracts managing global commerce and payments on Arc require reliable re
 
 ---
 
-## Deployed Contracts (Arc Testnet)
+## Deployed Contracts (Arc Mainnet)
 
 | Contract | Address | Explorer |
 | :--- | :--- | :--- |
-| **ArcPulseOracle** | `0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8` | [Explorer Link](https://explorer.testnet.arc.io/address/0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8) |
-| **ArcInvoiceConverter** | `0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894` | [Explorer Link](https://explorer.testnet.arc.io/address/0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894) |
+| **ArcPulseOracle** | `0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8` | [Explorer Link](https://explorer.arc.io/address/0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8) |
+| **ArcInvoiceConverter** | `0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894` | [Explorer Link](https://explorer.arc.io/address/0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894) |
 
 ### Active Feeds (8 Decimals)
 - **USD / IDR:** `0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9`
@@ -37,7 +37,7 @@ Smart contracts managing global commerce and payments on Arc require reliable re
 
 ## Developer Integration
 
-Detailed code examples for Solidity, Ethers.js, and Viem are documented in [docs/INTEGRATION.md](docs/INTEGRATION.md).
+Interactive HTML docs are available in `web/docs.html` and Markdown reference in [docs/INTEGRATION.md](docs/INTEGRATION.md).
 
 ```solidity
 interface IArcPulseOracle {

@@ -13,7 +13,7 @@ if (!fs.existsSync(deployedInfoPath)) {
 }
 
 const deployedInfo = JSON.parse(fs.readFileSync(deployedInfoPath, "utf-8"));
-const rpcUrl = process.env.ARC_RPC_URL || "https://rpc.testnet.arc.io";
+const rpcUrl = process.env.ARC_MAINNET_RPC_URL || process.env.ARC_RPC_URL || "https://rpc.mainnet.arc.io";
 const privateKey = process.env.DEPLOYER_PRIVATE_KEY;
 
 if (!privateKey) {
