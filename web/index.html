@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArcPulse — Fast FX & Asset Oracle for Arc L1</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #080C14;
+      color: #E2E8F0;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .card-glass {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .card-glass:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased">
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30">
+          ⚡
+        </div>
+        <div>
+          <span class="font-bold text-lg tracking-tight text-white">ArcPulse</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium ml-2">Arc L1</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button id="switchNetworkBtn" class="hidden sm:inline-flex items-center text-xs px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800 transition">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>
+          Arc Testnet (5042002)
+        </button>
+        <button id="connectWalletBtn" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-md shadow-blue-600/20">
+          Connect Wallet
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-10">
+    <!-- Hero Section -->
+    <div class="text-center max-w-2xl mx-auto space-y-3 pt-4">
+      <div class="inline-flex items-center space-y-0 text-xs px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800 text-blue-300">
+        <span>Powered by USDC Native Gas & Sub-Second Settlement</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+        High-Frequency FX & Asset Oracle for Arc
+      </h1>
+      <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+        ArcPulse delivers verifiable, low-latency forex and crypto price feeds tailored for programmable cross-border commerce on Arc L1.
+      </p>
+    </div>
+
+    <!-- Live Feeds Grid -->
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-white">Live On-Chain Feeds</h2>
+          <p class="text-xs text-slate-400">Directly fetched from ArcPulseOracle contract</p>
+        </div>
+        <button id="refreshFeedsBtn" class="text-xs px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center space-x-1.5 transition">
+          <span>🔄 Refresh Feeds</span>
+        </button>
+      </div>
+
+      <div id="feedsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Feed Skeleton Cards populated via JS -->
+      </div>
+    </div>
+
+    <!-- Consumer Demo: Arc Invoice Settlement -->
+    <div class="card-glass rounded-2xl p-6 sm:p-8 space-y-6">
+      <div class="border-b border-slate-800/80 pb-4">
+        <div class="inline-block px-2.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+          Consumer Showcase dApp
+        </div>
+        <h2 class="text-xl font-bold text-white">Instant Cross-Currency Settlement</h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1">
+          Simulate a merchant invoice issued in local fiat (IDR, EUR, JPY). ArcInvoiceConverter queries ArcPulseOracle on-chain and settles in exact native Arc USDC.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <!-- Form Inputs -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Select Invoice Currency</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button type="button" class="curr-pill px-3 py-2 rounded-lg border border-blue-500/40 bg-blue-600/10 text-blue-300 text-sm font-semibold text-center" data-curr="IDR">
+                IDR (Rupiah)
+              </button>
+              <button type="button" class="curr-pill px-3 py-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-300 text-sm font-semibold text-center" data-curr="EUR">
+                EUR (Euro)
+              </button>
+              <button type="button" class="curr-pill px-3 py-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-300 text-sm font-semibold text-center" data-curr="JPY">
+                JPY (Yen)
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Invoice Amount</label>
+            <div class="relative">
+              <input id="fiatInput" type="number" value="150000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white mono font-medium focus:outline-none focus:border-blue-500 transition text-sm">
+              <span id="currUnit" class="absolute right-3.5 top-2.5 text-xs text-slate-400 uppercase font-bold">IDR</span>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <button id="quoteBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium py-2.5 rounded-lg border border-slate-700 transition">
+              Calculate Exact Native USDC Rate
+            </button>
+          </div>
+        </div>
+
+        <!-- Settlement Summary Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 space-y-4 flex flex-col justify-between h-full">
+          <div>
+            <span class="text-xs text-slate-400 font-medium">On-Chain Settlement Quote</span>
+            <div class="mt-3 flex items-baseline space-x-2">
+              <span id="quoteUsdcDisplay" class="text-3xl font-extrabold text-white mono tracking-tight">--</span>
+              <span class="text-sm font-bold text-blue-400">USDC</span>
+            </div>
+            <p id="quoteRateDisplay" class="text-xs text-slate-400 mt-1 mono">Rate: --</p>
+          </div>
+
+          <div class="border-t border-slate-800 pt-4 space-y-3">
+            <div class="text-[11px] text-slate-400 flex items-center justify-between">
+              <span>Settlement Network:</span>
+              <span class="text-slate-200 font-medium">Arc Testnet (Osaka EVM)</span>
+            </div>
+            <div class="text-[11px] text-slate-400 flex items-center justify-between">
+              <span>Mempool Gas Floor:</span>
+              <span class="text-slate-200 font-medium">20 Gwei (Native USDC)</span>
+            </div>
+
+            <button id="settleBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-lg text-sm shadow-lg shadow-emerald-600/20 transition disabled:opacity-50 disabled:cursor-not-allowed">
+              Pay & Settle Invoice On-Chain
+            </button>
+            <div id="txResult" class="hidden text-xs rounded-lg p-3 bg-slate-950 border border-slate-800 mono break-all"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contract Transparency & Links -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+      <div class="card-glass rounded-xl p-4 space-y-1.5">
+        <span class="text-slate-400 font-medium">ArcPulseOracle Contract</span>
+        <div class="mono text-slate-200 flex items-center justify-between">
+          <span id="oracleAddressDisplay">0x0E5A...afc8</span>
+          <a id="oracleExplorerLink" href="#" target="_blank" class="text-blue-400 hover:underline">Explorer ↗</a>
+        </div>
+      </div>
+      <div class="card-glass rounded-xl p-4 space-y-1.5">
+        <span class="text-slate-400 font-medium">ArcInvoiceConverter (Consumer) Contract</span>
+        <div class="mono text-slate-200 flex items-center justify-between">
+          <span id="converterAddressDisplay">0xB400...F894</span>
+          <a id="converterExplorerLink" href="#" target="_blank" class="text-blue-400 hover:underline">Explorer ↗</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-850 bg-slate-950/60 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <span>Built for Arc Microgrants — Circle & DoraHacks</span>
+      <div class="flex items-center space-x-4 text-slate-400">
+        <a href="https://github.com/salismazaya/arc-pulse" target="_blank" class="hover:text-white transition">GitHub Repo</a>
+        <span>•</span>
+        <a href="https://explorer.testnet.arc.io" target="_blank" class="hover:text-white transition">Arc Testnet Explorer</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Configuration & Contracts
+    const CONFIG = {
+      chainIdHex: "0x4cef52",
+      chainIdDec: 5042002,
+      rpcUrl: "https://rpc.testnet.arc.io",
+      explorerUrl: "https://explorer.testnet.arc.io",
+      oracle: "0x0E5A4f7C4CDAA2C1cc240EeF69f9eedD925Fafc8",
+      converter: "0xB400Fc27D7124C3A95cB1b63e5e5F6c1f9D0F894",
+      feeds: [
+        { name: "USD/IDR", id: "0x27be29a97b92db0e31ca03433d2ea3070a6b370258fa5d1f0c302514746955a9", decimals: 8, prefix: "Rp ", suffix: "" },
+        { name: "EUR/USD", id: "0xa9226449042e36bf6865099eec57482aa55e3ad026c315a0e4a692b776c318ca", decimals: 8, prefix: "$", suffix: "" },
+        { name: "JPY/USD", id: "0xf9e627ddbdb060c1c9126daeb9addcd1d1ce7d49dbb540e2677f1c572bc8d195", decimals: 8, prefix: "¥", suffix: "" },
+        { name: "ETH/USDC", id: "0x7ea41243798f304c9efd5c2e0c82a273090146c4718014ecc8570eb373df2b78", decimals: 8, prefix: "$", suffix: "" },
+        { name: "BTC/USDC", id: "0x9282eb09b844791118907b4cb066e6f9d167435f2382166b9e3594bcb4072bde", decimals: 8, prefix: "$", suffix: "" }
+      ]
+    };
+
+    const ORACLE_ABI = [
+      "function latestRoundData(bytes32 feedId) external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound)",
+      "function getFeedDetails(bytes32 feedId) external view returns (string description, uint8 decimals, bool active, uint80 latestRoundId, int256 latestPrice, uint256 latestTimestamp)"
+    ];
+
+    const CONVERTER_ABI = [
+      "function calculateRequiredUsdc(string calldata currency, uint256 fiatUnits) external view returns (uint256 requiredUsdcWei, int256 rate)",
+      "function settleInvoice(bytes32 invoiceId, string calldata currency, uint256 fiatUnits) external payable returns (uint256 usdcCost)"
+    ];
+
+    let userAddress = null;
+    let browserProvider = null;
+    let selectedCurr = "IDR";
+    let latestCalculatedWei = null;
+
+    const readProvider = new ethers.JsonRpcProvider(CONFIG.rpcUrl);
+    const oracleContract = new ethers.Contract(CONFIG.oracle, ORACLE_ABI, readProvider);
+    const converterContract = new ethers.Contract(CONFIG.converter, CONVERTER_ABI, readProvider);
+
+    // Initial links setup
+    document.getElementById("oracleAddressDisplay").textContent = CONFIG.oracle.slice(0,6) + "..." + CONFIG.oracle.slice(-4);
+    document.getElementById("oracleExplorerLink").href = `${CONFIG.explorerUrl}/address/${CONFIG.oracle}`;
+    document.getElementById("converterAddressDisplay").textContent = CONFIG.converter.slice(0,6) + "..." + CONFIG.converter.slice(-4);
+    document.getElementById("converterExplorerLink").href = `${CONFIG.explorerUrl}/address/${CONFIG.converter}`;
+
+    // Render Feeds
+    async function loadFeeds() {
+      const container = document.getElementById("feedsContainer");
+      container.innerHTML = "";
+
+      for (const f of CONFIG.feeds) {
+        const card = document.createElement("div");
+        card.className = "card-glass rounded-xl p-5 space-y-3 transition duration-150";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-white text-base">${f.name}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 mono" id="round-${f.name}">Round #--</span>
+          </div>
+          <div class="text-2xl font-extrabold text-blue-400 mono" id="price-${f.name}">Loading...</div>
+          <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+            <span id="time-${f.name}">Updated: --</span>
+            <span class="text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Active</span>
+          </div>
+        `;
+        container.appendChild(card);
+
+        // Fetch on-chain
+        try {
+          const round = await oracleContract.latestRoundData(f.id);
+          const priceNum = Number(round.answer) / (10 ** f.decimals);
+          let formattedPrice = priceNum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+          document.getElementById(`price-${f.name}`).textContent = `${f.prefix}${formattedPrice}${f.suffix}`;
+          document.getElementById(`round-${f.name}`).textContent = `Round #${round.roundId.toString()}`;
+          const date = new Date(Number(round.updatedAt) * 1000);
+          document.getElementById(`time-${f.name}`).textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        } catch (e) {
+          console.error("Feed error:", f.name, e);
+          document.getElementById(`price-${f.name}`).textContent = "Error";
+        }
+      }
+    }
+
+    // Currency Switcher
+    document.querySelectorAll(".curr-pill").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".curr-pill").forEach(b => {
+          b.className = "curr-pill px-3 py-2 rounded-lg border border-slate-700 bg-slate-800/50 text-slate-300 text-sm font-semibold text-center";
+        });
+        btn.className = "curr-pill px-3 py-2 rounded-lg border border-blue-500/40 bg-blue-600/10 text-blue-300 text-sm font-semibold text-center";
+        selectedCurr = btn.dataset.curr;
+        document.getElementById("currUnit").textContent = selectedCurr;
+        if (selectedCurr === "IDR") document.getElementById("fiatInput").value = "150000";
+        if (selectedCurr === "EUR") document.getElementById("fiatInput").value = "20";
+        if (selectedCurr === "JPY") document.getElementById("fiatInput").value = "3000";
+        calculateQuote();
+      });
+    });
+
+    // Calculate Quote
+    async function calculateQuote() {
+      const val = parseFloat(document.getElementById("fiatInput").value || "0");
+      if (val <= 0) return;
+
+      try {
+        const [requiredWei, rate] = await converterContract.calculateRequiredUsdc(selectedCurr, BigInt(Math.round(val)));
+        latestCalculatedWei = requiredWei;
+        const usdcFormatted = (Number(requiredWei) / 1e18).toFixed(4);
+        document.getElementById("quoteUsdcDisplay").textContent = usdcFormatted;
+        
+        let rateDisplay = "";
+        if (selectedCurr === "IDR") rateDisplay = `1 USD = ${(Number(rate) / 1e8).toLocaleString()} IDR`;
+        if (selectedCurr === "EUR") rateDisplay = `1 EUR = ${(Number(rate) / 1e8).toFixed(4)} USD`;
+        if (selectedCurr === "JPY") rateDisplay = `1 USD = ${(Number(rate) / 1e8).toFixed(2)} JPY`;
+        document.getElementById("quoteRateDisplay").textContent = rateDisplay;
+      } catch (err) {
+        console.error("Quote error:", err);
+      }
+    }
+
+    // Connect Wallet & Switch Chain
+    async function switchNetwork() {
+      if (!window.ethereum) {
+        alert("Please install MetaMask or Rabby wallet!");
+        return;
+      }
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: CONFIG.chainIdHex }]
+        });
+      } catch (switchError) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: CONFIG.chainIdHex,
+              chainName: "Arc Testnet",
+              nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+              rpcUrls: [CONFIG.rpcUrl],
+              blockExplorerUrls: [CONFIG.explorerUrl]
+            }]
+          });
+        } catch (addError) {
+          console.error("Add chain error:", addError);
+        }
+      }
+    }
+
+    async function connectWallet() {
+      if (!window.ethereum) {
+        alert("No Web3 wallet found. Please install MetaMask or Rabby.");
+        return;
+      }
+      try {
+        await switchNetwork();
+        browserProvider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await browserProvider.getSigner();
+        userAddress = await signer.getAddress();
+        document.getElementById("connectWalletBtn").textContent = userAddress.slice(0, 6) + "..." + userAddress.slice(-4);
+        document.getElementById("connectWalletBtn").className = "bg-slate-800 text-slate-200 border border-slate-700 text-sm font-semibold px-4 py-2 rounded-lg mono";
+      } catch (err) {
+        console.error("Connect error:", err);
+      }
+    }
+
+    // Settle Invoice On-Chain
+    async function settleInvoice() {
+      if (!userAddress) {
+        await connectWallet();
+        if (!userAddress) return;
+      }
+      if (!latestCalculatedWei) {
+        await calculateQuote();
+      }
+
+      const settleBtn = document.getElementById("settleBtn");
+      const txResult = document.getElementById("txResult");
+      settleBtn.disabled = true;
+      settleBtn.textContent = "Broadcasting Transaction...";
+      txResult.classList.add("hidden");
+
+      try {
+        const signer = await browserProvider.getSigner();
+        const converterWithSigner = new ethers.Contract(CONFIG.converter, CONVERTER_ABI, signer);
+        const val = parseFloat(document.getElementById("fiatInput").value || "0");
+        const invoiceId = ethers.keccak256(ethers.toUtf8Bytes("WEB-INV-" + Date.now()));
+
+        const tx = await converterWithSigner.settleInvoice(invoiceId, selectedCurr, BigInt(Math.round(val)), {
+          value: latestCalculatedWei,
+          gasPrice: 20000000000n // 20 Gwei min floor on Arc
+        });
+
+        settleBtn.textContent = "Confirming on Arc L1...";
+        txResult.classList.remove("hidden");
+        txResult.innerHTML = `Transaction Sent! <a href="${CONFIG.explorerUrl}/tx/${tx.hash}" target="_blank" class="text-blue-400 underline">View on Explorer: ${tx.hash.slice(0,18)}...</a>`;
+
+        const receipt = await tx.wait();
+        settleBtn.textContent = "Settlement Confirmed! ✓";
+        txResult.innerHTML = `✅ Confirmed in block ${receipt.blockNumber}! <a href="${CONFIG.explorerUrl}/tx/${tx.hash}" target="_blank" class="text-emerald-400 underline">View Receipt ↗</a>`;
+      } catch (err) {
+        console.error("Settlement error:", err);
+        settleBtn.textContent = "Pay & Settle Invoice On-Chain";
+        txResult.classList.remove("hidden");
+        txResult.innerHTML = `<span class="text-rose-400">Failed: ${err.message.slice(0, 80)}</span>`;
+      } finally {
+        settleBtn.disabled = false;
+      }
+    }
+
+    // Event Listeners
+    document.getElementById("connectWalletBtn").addEventListener("click", connectWallet);
+    document.getElementById("switchNetworkBtn").addEventListener("click", switchNetwork);
+    document.getElementById("quoteBtn").addEventListener("click", calculateQuote);
+    document.getElementById("settleBtn").addEventListener("click", settleInvoice);
+    document.getElementById("refreshFeedsBtn").addEventListener("click", loadFeeds);
+    document.getElementById("fiatInput").addEventListener("input", calculateQuote);
+
+    // Initial triggers
+    loadFeeds();
+    calculateQuote();
+  </script>
+</body>
+</html>
