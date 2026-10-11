@@ -14,7 +14,9 @@ This document provides ready-to-submit answers and copy for the **DoraHacks Arc 
   - **ArcPulseOracle:** `0xC7184A427Dabb853b2820a2D03f2268087cC058a` ([Explorer Link](https://explorer.arc.io/address/0xC7184A427Dabb853b2820a2D03f2268087cC058a))
   - **ArcInvoiceConverter (Consumer Showcase):** `0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd` ([Explorer Link](https://explorer.arc.io/address/0x80C8F31A0b8F0bd16174b421Ab9f8D2dcB187dcd))
 - **Live Demo / Web Interface:** https://arc-pulse-oracle.netlify.app/
-- **Interactive Documentation:** https://arc-pulse-oracle.netlify.app/docs.html
+- **Contact Handles:** Telegram: `@salismiftah` | Discord: `salism3` | X: `https://x.com/salismazaya` | Email: `salismazaya@gmail.com`
+- **DoraHacks BUIDL ID:** `49610` (Submission ID: `55544`)
+- **Direct DoraHacks Project URL:** https://dorahacks.io/buidl/49610
 
 ---
 
